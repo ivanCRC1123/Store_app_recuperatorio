@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useProductDetail } from "../hooks/useProducts";
+import { useProducts } from "../hooks/useProducts";
 import { useCartStore } from "../../../store/useCartStore";
 import { Button } from "../../../shared/ui/Button";
 import { Spinner } from "../../../shared/ui/Spinner";
@@ -8,14 +8,14 @@ import { ProductImage } from "../../../shared/ui/ProductImage";
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { data: product, isLoading, error } = useProductDetail(id!);
+  const { data: product, isLoading, error } = useProducts().useGetById(Number(id));
   const { addItem } = useCartStore();
   const [added, setAdded] = useState(false);
 
   const handleAdd = () => {
     if (!product) return;
     addItem({
-      id: String(product.id),
+      id: product.id,
       name: product.nombre,
       price: product.precio_base,
       quantity: 1,

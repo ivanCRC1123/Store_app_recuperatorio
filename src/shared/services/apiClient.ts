@@ -10,11 +10,16 @@ const apiClient = axios.create({
 // Solicitar interceptor: agregar token portador desde zustand persist
 apiClient.interceptors.request.use((config) => {
   try {
-    const stored = localStorage.getItem("store-auth-storage");
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (parsed?.state?.token) {
-        config.headers.Authorization = `Bearer ${parsed.state.token}`;
+    // Try store-app auth first, then admin-app auth as fallback
+    const storageKeys = ["store-auth-storage", "admin-auth-storage"];
+    for (const key of storageKeys) {
+      const stored = localStorage.getItem(key);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.state?.token) {
+          config.headers.Authorization = `Bearer ${parsed.state.token}`;
+          break;
+        }
       }
     }
   } catch {

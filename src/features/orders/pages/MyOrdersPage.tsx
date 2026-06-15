@@ -1,6 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { getMyOrders } from "../services/orderService";
+import { useOrders } from "../hooks/useOrders";
 import { getApiErrorMessage } from "../../../shared/services/apiError";
 import { Alert } from "../../../shared/ui/Alert";
 
@@ -23,14 +22,7 @@ const ESTADO_COLORS: Record<string, string> = {
 };
 
 export default function MyOrdersPage() {
-  const {
-    data: pedidos,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["mis-pedidos"],
-    queryFn: getMyOrders,
-  });
+  const { data: pedidos, isLoading, error } = useOrders();
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">

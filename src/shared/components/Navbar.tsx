@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useCartStore } from "../../store/useCartStore";
-import { useAuthStore } from "../../store/UseauthStore";
+import { useAuthStore } from "../../store/useAuthStore";
 
 export function Navbar() {
   const items = useCartStore((s) => s.items);

@@ -1,6 +1,6 @@
 import { useCartStore } from "../../../store/useCartStore";
 import { Link } from "react-router-dom";
-import { useAuthStore } from "../../../store/UseauthStore";
+import { useAuthStore } from "../../../store/useAuthStore";
 import { Button } from "../../../shared/ui/Button";
 import { CartItem } from "../components/CartItem";
 

@@ -16,7 +16,7 @@ export function ProductCard({ product }: ProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
     addItem({
-      id: String(product.id),
+      id: product.id,
       name: product.nombre,
       price: product.precio_base,
       quantity: 1,

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuthStore } from "../../../store/UseauthStore";
+import { useAuthStore } from "../../../store/useAuthStore";
 import { Button } from "../../../shared/ui/Button";
 import { Input } from "../../../shared/ui/Input";
 import { Alert } from "../../../shared/ui/Alert";

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useCartStore } from "../../../store/useCartStore";
-import { useCreateOrder } from "../hooks/useCreateOrder";
+import { useOrders } from "../hooks/useOrders";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuthStore } from "../../../store/UseauthStore";
+import { useAuthStore } from "../../../store/useAuthStore";
 import AddressSelector from "../../addresses/components/AddressSelector";
 import type { DireccionEntregaReadSimple } from "../../addresses/types";
 import type { FormaPagoEnum } from "../types/orders";
@@ -23,7 +23,7 @@ function formatAddress(addr: DireccionEntregaReadSimple): string {
 
 export default function CheckoutPage() {
   const { items } = useCartStore();
-  const { mutate, isPending, isSuccess, data } = useCreateOrder();
+  const { create, isCreating } = useOrders();
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const [selectedAddress, setSelectedAddress] =
@@ -38,20 +38,20 @@ export default function CheckoutPage() {
 
   const handleOrder = () => {
     if (!selectedAddress) return; // el botón está deshabilitado, pero guarda igual
-    mutate({
+    create.mutate({
       usuario_id: user!.id,
       forma_pago: formaPago,
       direccion_entrega: formatAddress(selectedAddress),
       observaciones: observaciones || undefined,
       detalles: items.map((i) => ({
-        producto_id: Number(i.id),
+        producto_id: i.id,
         cantidad: i.quantity,
       })),
     });
   };
 
   // SUCCESS
-  if (isSuccess) {
+  if (create.isSuccess) {
     return (
       <div className="mx-auto max-w-lg px-4 py-16 sm:px-6">
         <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-b from-emerald-500/5 to-transparent p-8 text-center shadow-xl">
@@ -65,24 +65,24 @@ export default function CheckoutPage() {
             Recibimos tu pedido y lo estamos procesando
           </p>
 
-          {data && (
+          {create.data && (
             <div className="mt-8 space-y-3 rounded-xl border border-zinc-800/60 bg-zinc-900/40 p-5 text-left">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-zinc-500">N° Pedido</span>
                 <span className="font-mono text-sm font-bold text-zinc-100">
-                  {data.numero_pedido}
+                  {create.data.numero_pedido}
                 </span>
               </div>
               <div className="flex items-center justify-between border-t border-zinc-800/60 pt-3">
                 <span className="text-sm text-zinc-500">Total</span>
                 <span className="text-xl font-bold text-emerald-400">
-                  ${data.monto_total}
+                  ${create.data.monto_total}
                 </span>
               </div>
               <div className="flex items-center justify-between border-t border-zinc-800/60 pt-3">
                 <span className="text-sm text-zinc-500">Estado</span>
                 <span className="rounded-full bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-400">
-                  {data.estado}
+                  {create.data.estado}
                 </span>
               </div>
             </div>
@@ -230,10 +230,10 @@ export default function CheckoutPage() {
             <Button
               size="xl"
               onClick={handleOrder}
-              disabled={isPending || !selectedAddress}
+              disabled={isCreating || !selectedAddress}
               className="mt-6 w-full"
             >
-              {isPending ? (
+              {isCreating ? (
                 <>
                   <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                   Procesando...

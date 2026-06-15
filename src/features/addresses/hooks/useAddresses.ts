@@ -9,40 +9,52 @@ import type { DireccionEntregaCreateCliente } from "../types";
 
 const ADDRESSES_KEY = ["my-addresses"];
 
-/** hook único que proporciona consulta + todas las mutaciones para direcciones  (pidio arreglarlo y unificarlo) **/
-export const useAddresses = () => {
+/** Hook único que proporciona consulta + todas las mutaciones para direcciones **/
+export function useAddresses() {
   const queryClient = useQueryClient();
 
-  const addressesQuery = useQuery({
+  const getAll = useQuery({
     queryKey: ADDRESSES_KEY,
     queryFn: fetchMyAddresses,
   });
 
-  const createMutation = useMutation({
+  const create = useMutation({
     mutationFn: (data: DireccionEntregaCreateCliente) => createAddress(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ADDRESSES_KEY });
     },
+    onError: (error) => {
+      console.error("Error al crear dirección:", error);
+    },
   });
 
-  const setPrincipalMutation = useMutation({
+  const setPrincipal = useMutation({
     mutationFn: (id: number) => setPrincipalAddress(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ADDRESSES_KEY });
     },
+    onError: (error) => {
+      console.error("Error al establecer dirección principal:", error);
+    },
   });
 
-  const deleteMutation = useMutation({
+  const remove = useMutation({
     mutationFn: (id: number) => deleteAddress(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ADDRESSES_KEY });
     },
+    onError: (error) => {
+      console.error("Error al eliminar dirección:", error);
+    },
   });
 
   return {
-    addressesQuery,
-    createMutation,
-    setPrincipalMutation,
-    deleteMutation,
+    ...getAll,
+    create,
+    setPrincipal,
+    delete: remove,
+    isCreating: create.isPending,
+    isSettingPrincipal: setPrincipal.isPending,
+    isDeleting: remove.isPending,
   };
-};
+}

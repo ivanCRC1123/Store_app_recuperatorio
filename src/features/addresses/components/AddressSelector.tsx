@@ -19,19 +19,19 @@ export default function AddressSelector({
   onSelect,
 }: AddressSelectorProps) {
   const {
-    addressesQuery,
-    createMutation,
-    deleteMutation,
-    setPrincipalMutation,
+    data: addresses,
+    isLoading,
+    isError,
+    error,
+    create,
+    delete: removeAddr,
+    setPrincipal,
+    isCreating,
   } = useAddresses();
-  const addresses = addressesQuery.data;
-  const isLoading = addressesQuery.isLoading;
-  const isError = addressesQuery.isError;
-  const error = addressesQuery.error;
   const [showForm, setShowForm] = useState(false);
 
   const handleCreate = (data: DireccionEntregaCreateCliente) => {
-    createMutation.mutate(data, {
+    create.mutate(data, {
       onSuccess: () => {
         setShowForm(false);
       },
@@ -40,7 +40,7 @@ export default function AddressSelector({
 
   const handleDelete = (id: number) => {
     if (window.confirm("¿Eliminar esta dirección?")) {
-      deleteMutation.mutate(id);
+      removeAddr.mutate(id);
     }
   };
 
@@ -96,7 +96,7 @@ export default function AddressSelector({
               selected={addr.id === selectedId}
               onSelect={() => onSelect(addr)}
               onDelete={() => handleDelete(addr.id)}
-              onSetPrincipal={() => setPrincipalMutation.mutate(addr.id)}
+              onSetPrincipal={() => setPrincipal.mutate(addr.id)}
             />
           ))}
         </div>
@@ -111,7 +111,7 @@ export default function AddressSelector({
           <AddressForm
             onSubmit={handleCreate}
             onCancel={() => setShowForm(false)}
-            isPending={createMutation.isPending}
+            isPending={isCreating}
           />
         </div>
       )}

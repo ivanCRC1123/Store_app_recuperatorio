@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import apiClient from "../shared/services/apiClient";
+import { loginApi, registerApi } from "../features/auth/services/authService";
 
 export interface StoreUser {
   id: number;
@@ -30,10 +30,7 @@ export const useAuthStore = create<AuthState>()(
       token: null,
 
       login: async (email: string, password: string) => {
-        const { data } = await apiClient.post("/api/v1/auth/login", {
-          email,
-          password,
-        });
+        const data = await loginApi(email, password);
         const user: StoreUser = {
           id: data.user_id,
           email: data.email,
@@ -49,12 +46,7 @@ export const useAuthStore = create<AuthState>()(
         apellido: string,
         password: string,
       ) => {
-        const { data } = await apiClient.post("/api/v1/auth/register", {
-          email,
-          nombre,
-          apellido,
-          password,
-        });
+        const data = await registerApi(email, nombre, apellido, password);
         const user: StoreUser = {
           id: data.user_id,
           email: data.email,

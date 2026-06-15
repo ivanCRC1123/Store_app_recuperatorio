@@ -1,14 +1,23 @@
 import apiClient from "../../../shared/services/apiClient";
 import type { ProductoRead } from "../types";
 
-export const fetchProducts = async (): Promise<ProductoRead[]> => {
-  const { data } = await apiClient.get("/api/v1/productos/", {
-    params: { limit: 100, offset: 0 },
-  });
+export interface FetchProductsParams {
+  min_precio?: number;
+  max_precio?: number;
+  limit?: number;
+  offset?: number;
+  categoria_id?: number;
+  search?: string;
+}
+
+export const fetchProducts = async (
+  params?: FetchProductsParams
+): Promise<ProductoRead[]> => {
+  const { data } = await apiClient.get("/api/v1/productos/", { params });
   return data;
 };
 
-export const fetchProductById = async (id: string): Promise<ProductoRead> => {
+export const fetchProductById = async (id: number): Promise<ProductoRead> => {
   const { data } = await apiClient.get(`/api/v1/productos/${id}`);
   return data;
 };

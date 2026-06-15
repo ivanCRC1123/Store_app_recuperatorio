@@ -1,7 +1,7 @@
 import { useCartStore } from "../../../store/useCartStore";
 
 interface CartItemData {
-  id: string;
+  id: number;
   name: string;
   price: number;
   quantity: number;
